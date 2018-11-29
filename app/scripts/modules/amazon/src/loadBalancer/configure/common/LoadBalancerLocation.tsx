@@ -167,6 +167,7 @@ class LoadBalancerLocationImpl extends React.Component<
       return chain(subnets)
         .filter({ account, region })
         .reject({ target: 'ec2' })
+        .reject({ purpose: null })
         .value();
     });
   }
@@ -212,6 +213,9 @@ class LoadBalancerLocationImpl extends React.Component<
     this.getAvailableSubnets().then(availableSubnets => {
       const subnetOptions = availableSubnets.reduce(
         (accumulator, subnet) => {
+          if (!subnet.purpose) {
+            return accumulator;
+          }
           if (!accumulator[subnet.purpose]) {
             accumulator[subnet.purpose] = {
               purpose: subnet.purpose,
