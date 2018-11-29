@@ -274,6 +274,8 @@ export class CreateApplicationLoadBalancer extends React.Component<
       heading = `Edit ${loadBalancerCommand.name}: ${loadBalancerCommand.region}: ${loadBalancerCommand.credentials}`;
     }
 
+    loadBalancerCommand.name = loadBalancerCommand.name || '';
+
     return (
       <ApplicationLoadBalancerModal
         heading={heading}
