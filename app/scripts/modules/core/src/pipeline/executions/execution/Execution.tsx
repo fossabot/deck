@@ -8,6 +8,7 @@ import * as classNames from 'classnames';
 import { Application } from 'core/application/application.model';
 import { StageExecutionDetails } from 'core/pipeline/details/StageExecutionDetails';
 import { ExecutionStatus } from 'core/pipeline/status/ExecutionStatus';
+import { ExecutionParameters } from 'core/pipeline/status/ExecutionParameters';
 import { IExecution, IRestartDetails, IPipeline } from 'core/domain';
 import { IExecutionViewState, IPipelineGraphNode } from 'core/pipeline/config/graph/pipelineGraph.service';
 import { OrchestratedItemRunningTime } from './OrchestratedItemRunningTime';
@@ -25,6 +26,8 @@ import { Tooltip } from 'core/presentation/Tooltip';
 import { CancelModal } from 'core/cancelModal/CancelModal';
 
 import './execution.less';
+import { ResolvedArtifactList } from 'core/pipeline/status/ResolvedArtifactList';
+
 
 export interface IExecutionProps {
   application: Application;
@@ -39,6 +42,9 @@ export interface IExecutionProps {
 
 export interface IExecutionState {
   showingDetails: boolean;
+  showingParams: boolean;
+  parametersCount: number;
+  collapseParamsArtifactsAfter: number;
   pipelinesUrl: string;
   viewState: IExecutionViewState;
   sortFilter: ISortFilter;
@@ -56,8 +62,12 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
 
   constructor(props: IExecutionProps) {
     super(props);
-    const { execution } = this.props;
+    const { execution, standalone } = this.props;
+    const { trigger } = execution;
+    const { resolvedExpectedArtifacts } = trigger;
     const { $stateParams } = ReactInjector;
+
+    const collapseParamsArtifactsAfter = 4;
 
     const initialViewState = {
       activeStageId: Number($stateParams.stage),
@@ -68,9 +78,13 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     };
 
     const restartedStage = execution.stages.find(stage => stage.context.restartDetails !== undefined);
+    const parametersCount = Object.keys(execution.trigger.parameters).length;
 
     this.state = {
       showingDetails: this.invalidateShowingDetails(props),
+      showingParams: standalone || parametersCount + resolvedExpectedArtifacts.length < collapseParamsArtifactsAfter,
+      parametersCount: parametersCount,
+      collapseParamsArtifactsAfter: collapseParamsArtifactsAfter,
       pipelinesUrl: [SETTINGS.gateUrl, 'pipelines/'].join('/'),
       viewState: initialViewState,
       sortFilter: ExecutionState.filterModel.asFilterModel.sortFilter,
@@ -119,6 +133,12 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
       executionService.toggleDetails(execution, stageIndex, subIndex);
     });
   };
+
+  public toggleParams = (): void => {
+    const { showingParams } = this.state;
+    this.setState({ showingParams: !showingParams });
+  };
+
 
   public getUrl(): string {
     let url = $location.absUrl();
@@ -246,9 +266,25 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     ReactGA.event({ category: 'Pipeline', action: 'Permalink clicked' });
   };
 
+  private handleToggleDetails = (): void => {
+    ReactGA.event({ category: 'Pipeline', action: 'Execution details toggled (Details link)' });
+    this.toggleDetails();
+  };
+
   public render() {
     const { application, execution, showAccountLabels, showDurations, standalone, title } = this.props;
-    const { pipelinesUrl, restartDetails, showingDetails, sortFilter, viewState } = this.state;
+    const {
+      pipelinesUrl,
+      restartDetails,
+      showingDetails,
+      showingParams,
+      parametersCount,
+      collapseParamsArtifactsAfter,
+      sortFilter,
+      viewState,
+    } = this.state;
+    const { trigger } = execution;
+    const { artifacts, resolvedExpectedArtifacts } = trigger;
 
     const { CopyToClipboard } = NgReact;
     const accountLabels = this.props.execution.deploymentTargets.map(account => (
@@ -298,6 +334,7 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
             execution={execution}
             toggleDetails={this.toggleDetails}
             showingDetails={showingDetails}
+            showingParams={showingParams}
             standalone={standalone}
           />
           <div className="execution-bar">
@@ -376,7 +413,41 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
               </Tooltip>
             )}
           </div>
+          <div className="execution-parameters-button">
+            <a className="clickable" onClick={this.toggleParams}>
+              <span
+                className={`small glyphicon ${showingParams ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'}`}
+              />
+              Parameters/Artifacts ({parametersCount}/{`${resolvedExpectedArtifacts.length}`})
+            </a>
+          </div>
+          <ExecutionParameters
+            execution={execution}
+            showingParams={showingParams}
+            columnFormatAfter={collapseParamsArtifactsAfter - resolvedExpectedArtifacts.length}
+          />
+
+          {SETTINGS.feature.artifacts && (
+            <ResolvedArtifactList
+              artifacts={artifacts}
+              resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+              showingExpandedArtifacts={showingParams}
+              columnFormatAfter={collapseParamsArtifactsAfter - parametersCount}
+            />
+          )}
+
+          {!standalone && (
+            <div className="execution-details-button">
+              <a className="clickable" onClick={this.handleToggleDetails}>
+                <span
+                  className={`small glyphicon ${showingDetails ? 'glyphicon-chevron-down' : 'glyphicon-chevron-right'}`}
+                />
+                Execution Details
+              </a>
+            </div>
+          )}
         </div>
+
         {showingDetails && (
           <div className="execution-graph">
             <PipelineGraph execution={execution} onNodeClick={this.handleNodeClick} viewState={viewState} />
