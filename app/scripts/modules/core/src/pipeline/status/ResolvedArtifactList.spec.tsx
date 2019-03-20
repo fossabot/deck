@@ -19,7 +19,9 @@ describe('<ResolvedArtifactList/>', () => {
 
   it('renders null when null artifacts are passed in', function() {
     const artifacts: IArtifact[] = null;
-    component = shallow(<ResolvedArtifactList artifacts={artifacts} />);
+    component = shallow(
+      <ResolvedArtifactList artifacts={artifacts} columnFormatAfter={10} showingExpandedArtifacts={true} />,
+    );
     expect(component.get(0)).toEqual(null);
   });
 
@@ -27,7 +29,32 @@ describe('<ResolvedArtifactList/>', () => {
     const artifacts: IArtifact[] = [];
     const resolvedExpectedArtifacts = artifacts.map(a => ({ boundArtifact: a } as IExpectedArtifact));
     component = shallow(
-      <ResolvedArtifactList artifacts={artifacts} resolvedExpectedArtifacts={resolvedExpectedArtifacts} />,
+      <ResolvedArtifactList
+        artifacts={artifacts}
+        resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+        columnFormatAfter={10}
+        showingExpandedArtifacts={true}
+      />,
+    );
+    expect(component.get(0)).toEqual(null);
+  });
+
+  it('renders null when artifacts are set to not expanded', () => {
+    const artifacts: IArtifact[] = [
+      {
+        id: 'abcd',
+        type: ARTIFACT_TYPE,
+        name: ARTIFACT_NAME,
+      },
+    ];
+    const resolvedExpectedArtifacts = artifacts.map(a => ({ boundArtifact: a } as IExpectedArtifact));
+    component = shallow(
+      <ResolvedArtifactList
+        artifacts={artifacts}
+        resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+        columnFormatAfter={10}
+        showingExpandedArtifacts={false}
+      />,
     );
     expect(component.get(0)).toEqual(null);
   });
@@ -40,11 +67,75 @@ describe('<ResolvedArtifactList/>', () => {
         name: ARTIFACT_NAME,
       },
     ];
+
     const resolvedExpectedArtifacts = artifacts.map(a => ({ boundArtifact: a } as IExpectedArtifact));
     component = shallow(
-      <ResolvedArtifactList artifacts={artifacts} resolvedExpectedArtifacts={resolvedExpectedArtifacts} />,
+      <ResolvedArtifactList
+        artifacts={artifacts}
+        resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+        columnFormatAfter={10}
+        showingExpandedArtifacts={true}
+      />,
     );
+
+    expect(component.find('.artifact-list-column').length).toEqual(1);
     expect(component.find(Artifact).length).toEqual(1);
+  });
+
+  it('renders one columns when columnFormatAfter is set to something high', function() {
+    const artifacts: IArtifact[] = [
+      {
+        id: 'abcd',
+        type: ARTIFACT_TYPE,
+        name: ARTIFACT_NAME,
+      },
+      {
+        id: 'efgh',
+        type: ARTIFACT_TYPE,
+        name: ARTIFACT_NAME,
+      },
+    ];
+
+    const resolvedExpectedArtifacts = artifacts.map(a => ({ boundArtifact: a } as IExpectedArtifact));
+    component = shallow(
+      <ResolvedArtifactList
+        artifacts={artifacts}
+        resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+        columnFormatAfter={10}
+        showingExpandedArtifacts={true}
+      />,
+    );
+
+    expect(component.find('.artifact-list-column').length).toEqual(1);
+    expect(component.find(Artifact).length).toEqual(2);
+  });
+
+  it('renders two columns when columnFormatAfter is set to 2', function() {
+    const artifacts: IArtifact[] = [
+      {
+        id: 'abcd',
+        type: ARTIFACT_TYPE,
+        name: ARTIFACT_NAME,
+      },
+      {
+        id: 'efgh',
+        type: ARTIFACT_TYPE,
+        name: ARTIFACT_NAME,
+      },
+    ];
+
+    const resolvedExpectedArtifacts = artifacts.map(a => ({ boundArtifact: a } as IExpectedArtifact));
+    component = shallow(
+      <ResolvedArtifactList
+        artifacts={artifacts}
+        resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+        columnFormatAfter={2}
+        showingExpandedArtifacts={true}
+      />,
+    );
+
+    expect(component.find('.artifact-list-column').length).toEqual(2);
+    expect(component.find(Artifact).length).toEqual(2);
   });
 
   it('does not render an artifact without a type and name', function() {
@@ -55,12 +146,17 @@ describe('<ResolvedArtifactList/>', () => {
     ];
     const resolvedExpectedArtifacts = singleArtifact.map(a => ({ boundArtifact: a } as IExpectedArtifact));
     component = shallow(
-      <ResolvedArtifactList artifacts={singleArtifact} resolvedExpectedArtifacts={resolvedExpectedArtifacts} />,
+      <ResolvedArtifactList
+        artifacts={singleArtifact}
+        resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+        columnFormatAfter={10}
+        showingExpandedArtifacts={true}
+      />,
     );
     expect(component.get(0)).toEqual(null);
   });
 
-  it('renders an artifacts that does have a type and name', function() {
+  it('only renders an artifacts that has a type and name', function() {
     const artifacts: IArtifact[] = [
       {
         id: 'abcd',
@@ -73,7 +169,12 @@ describe('<ResolvedArtifactList/>', () => {
     ];
     const resolvedExpectedArtifacts = artifacts.map(a => ({ boundArtifact: a } as IExpectedArtifact));
     component = shallow(
-      <ResolvedArtifactList artifacts={artifacts} resolvedExpectedArtifacts={resolvedExpectedArtifacts} />,
+      <ResolvedArtifactList
+        artifacts={artifacts}
+        resolvedExpectedArtifacts={resolvedExpectedArtifacts}
+        columnFormatAfter={10}
+        showingExpandedArtifacts={true}
+      />,
     );
     expect(component.find(Artifact).length).toEqual(1);
   });
@@ -86,8 +187,10 @@ describe('<ResolvedArtifactList/>', () => {
         name: ARTIFACT_NAME,
       },
     ];
-    component = shallow(<ResolvedArtifactList artifacts={artifacts} />);
-    const li = component.find('li');
+    component = shallow(
+      <ResolvedArtifactList artifacts={artifacts} columnFormatAfter={10} showingExpandedArtifacts={true} />,
+    );
+    const li = component.find('.extraneous-artifacts');
     expect(li.text()).toMatch(/1.*artifact.*not.*consumed/);
   });
 });
