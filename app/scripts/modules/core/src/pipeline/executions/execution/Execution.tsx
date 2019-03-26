@@ -12,6 +12,7 @@ import { ExecutionStatus } from 'core/pipeline/status/ExecutionStatus';
 import { ExecutionParameters } from 'core/pipeline/status/ExecutionParameters';
 import { IExecution, IRestartDetails, IPipeline } from 'core/domain';
 import { IExecutionViewState, IPipelineGraphNode } from 'core/pipeline/config/graph/pipelineGraph.service';
+import { ResolvedArtifactList } from 'core/pipeline/status/ResolvedArtifactList';
 import { OrchestratedItemRunningTime } from './OrchestratedItemRunningTime';
 import { SETTINGS } from 'core/config/settings';
 import { AccountTag } from 'core/account';
@@ -27,7 +28,6 @@ import { Tooltip } from 'core/presentation/Tooltip';
 import { CancelModal } from 'core/cancelModal/CancelModal';
 
 import './execution.less';
-import { ResolvedArtifactList } from 'core/pipeline/status/ResolvedArtifactList';
 
 export interface IExecutionProps {
   application: Application;
