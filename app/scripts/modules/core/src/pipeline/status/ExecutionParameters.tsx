@@ -8,7 +8,7 @@ import './executionParameters.less';
 export interface IExecutionParametersProps {
   execution: IExecution;
   showingParams: boolean;
-  columnFormatAfter: number;
+  columnLayoutAfter: number;
 }
 
 export interface IExecutionParametersState {
@@ -40,7 +40,7 @@ export class ExecutionParameters extends React.Component<IExecutionParametersPro
   }
 
   public render() {
-    const { showingParams, columnFormatAfter } = this.props;
+    const { showingParams, columnLayoutAfter } = this.props;
     const { parameters } = this.state;
 
     if (!parameters.length || !showingParams) {
@@ -48,7 +48,7 @@ export class ExecutionParameters extends React.Component<IExecutionParametersPro
     }
 
     let paramsSplitIntoColumns = [parameters];
-    if (parameters.length >= columnFormatAfter) {
+    if (parameters.length >= columnLayoutAfter) {
       const halfWay = Math.ceil(parameters.length / 2);
       paramsSplitIntoColumns = [parameters.slice(0, halfWay), parameters.slice(halfWay)];
     }

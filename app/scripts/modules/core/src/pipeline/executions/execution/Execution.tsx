@@ -424,7 +424,7 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
           <ExecutionParameters
             execution={execution}
             showingParams={showingParams}
-            columnFormatAfter={collapseParamsArtifactsAfter - resolvedExpectedArtifacts.length}
+            columnLayoutAfter={collapseParamsArtifactsAfter - resolvedExpectedArtifacts.length}
           />
 
           {SETTINGS.feature.artifacts && (
@@ -432,7 +432,7 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
               artifacts={artifacts}
               resolvedExpectedArtifacts={resolvedExpectedArtifacts}
               showingExpandedArtifacts={showingParams}
-              columnFormatAfter={collapseParamsArtifactsAfter - parametersCount}
+              columnLayoutAfter={collapseParamsArtifactsAfter - parametersCount}
             />
           )}
 

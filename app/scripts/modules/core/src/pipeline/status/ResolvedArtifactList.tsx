@@ -9,7 +9,7 @@ export interface IResolvedArtifactListProps {
   artifacts: IArtifact[];
   resolvedExpectedArtifacts?: IExpectedArtifact[];
   showingExpandedArtifacts: boolean;
-  columnFormatAfter: number;
+  columnLayoutAfter: number;
 }
 
 export class ResolvedArtifactList extends React.Component<IResolvedArtifactListProps> {
@@ -18,7 +18,7 @@ export class ResolvedArtifactList extends React.Component<IResolvedArtifactListP
   }
 
   public render() {
-    let { artifacts, resolvedExpectedArtifacts, columnFormatAfter, showingExpandedArtifacts } = this.props;
+    let { artifacts, resolvedExpectedArtifacts, columnLayoutAfter, showingExpandedArtifacts } = this.props;
 
     artifacts = artifacts || [];
     resolvedExpectedArtifacts = resolvedExpectedArtifacts || [];
@@ -41,12 +41,12 @@ export class ResolvedArtifactList extends React.Component<IResolvedArtifactListP
     }
 
     // if we're exceeding the limit, don't show it
-    if (!showingExpandedArtifacts && decoratedArtifacts.length >= columnFormatAfter) {
+    if (!showingExpandedArtifacts && decoratedArtifacts.length >= columnLayoutAfter) {
       return null;
     }
 
     let columns = [decoratedExpectedArtifacts];
-    if (decoratedArtifacts.length >= columnFormatAfter) {
+    if (decoratedArtifacts.length >= columnLayoutAfter) {
       const halfIndex = Math.ceil(decoratedArtifacts.length / 2);
       columns = [decoratedArtifacts.slice(0, halfIndex), decoratedArtifacts.slice(halfIndex)];
     }

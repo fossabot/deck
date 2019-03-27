@@ -20,7 +20,7 @@ describe('<ResolvedArtifactList/>', () => {
   it('renders null when null artifacts are passed in', function() {
     const artifacts: IArtifact[] = null;
     component = shallow(
-      <ResolvedArtifactList artifacts={artifacts} columnFormatAfter={10} showingExpandedArtifacts={true} />,
+      <ResolvedArtifactList artifacts={artifacts} columnLayoutAfter={10} showingExpandedArtifacts={true} />,
     );
     expect(component.get(0)).toEqual(null);
   });
@@ -32,7 +32,7 @@ describe('<ResolvedArtifactList/>', () => {
       <ResolvedArtifactList
         artifacts={artifacts}
         resolvedExpectedArtifacts={resolvedExpectedArtifacts}
-        columnFormatAfter={10}
+        columnLayoutAfter={10}
         showingExpandedArtifacts={true}
       />,
     );
@@ -52,7 +52,7 @@ describe('<ResolvedArtifactList/>', () => {
       <ResolvedArtifactList
         artifacts={artifacts}
         resolvedExpectedArtifacts={resolvedExpectedArtifacts}
-        columnFormatAfter={10}
+        columnLayoutAfter={10}
         showingExpandedArtifacts={false}
       />,
     );
@@ -73,7 +73,7 @@ describe('<ResolvedArtifactList/>', () => {
       <ResolvedArtifactList
         artifacts={artifacts}
         resolvedExpectedArtifacts={resolvedExpectedArtifacts}
-        columnFormatAfter={10}
+        columnLayoutAfter={10}
         showingExpandedArtifacts={true}
       />,
     );
@@ -82,7 +82,7 @@ describe('<ResolvedArtifactList/>', () => {
     expect(component.find(Artifact).length).toEqual(1);
   });
 
-  it('renders one columns when columnFormatAfter is set to something high', function() {
+  it('renders one columns when columnLayoutAfter is set to something high', function() {
     const artifacts: IArtifact[] = [
       {
         id: 'abcd',
@@ -101,7 +101,7 @@ describe('<ResolvedArtifactList/>', () => {
       <ResolvedArtifactList
         artifacts={artifacts}
         resolvedExpectedArtifacts={resolvedExpectedArtifacts}
-        columnFormatAfter={10}
+        columnLayoutAfter={10}
         showingExpandedArtifacts={true}
       />,
     );
@@ -110,7 +110,7 @@ describe('<ResolvedArtifactList/>', () => {
     expect(component.find(Artifact).length).toEqual(2);
   });
 
-  it('renders two columns when columnFormatAfter is set to 2', function() {
+  it('renders two columns when columnLayoutAfter is set to 2', function() {
     const artifacts: IArtifact[] = [
       {
         id: 'abcd',
@@ -129,7 +129,7 @@ describe('<ResolvedArtifactList/>', () => {
       <ResolvedArtifactList
         artifacts={artifacts}
         resolvedExpectedArtifacts={resolvedExpectedArtifacts}
-        columnFormatAfter={2}
+        columnLayoutAfter={2}
         showingExpandedArtifacts={true}
       />,
     );
@@ -149,7 +149,7 @@ describe('<ResolvedArtifactList/>', () => {
       <ResolvedArtifactList
         artifacts={singleArtifact}
         resolvedExpectedArtifacts={resolvedExpectedArtifacts}
-        columnFormatAfter={10}
+        columnLayoutAfter={10}
         showingExpandedArtifacts={true}
       />,
     );
@@ -172,7 +172,7 @@ describe('<ResolvedArtifactList/>', () => {
       <ResolvedArtifactList
         artifacts={artifacts}
         resolvedExpectedArtifacts={resolvedExpectedArtifacts}
-        columnFormatAfter={10}
+        columnLayoutAfter={10}
         showingExpandedArtifacts={true}
       />,
     );
@@ -188,7 +188,7 @@ describe('<ResolvedArtifactList/>', () => {
       },
     ];
     component = shallow(
-      <ResolvedArtifactList artifacts={artifacts} columnFormatAfter={10} showingExpandedArtifacts={true} />,
+      <ResolvedArtifactList artifacts={artifacts} columnLayoutAfter={10} showingExpandedArtifacts={true} />,
     );
     const li = component.find('.extraneous-artifacts');
     expect(li.text()).toMatch(/1.*artifact.*not.*consumed/);
