@@ -1,4 +1,5 @@
 import * as React from 'react';
+import memoize from 'memoize-one';
 
 import { IExecution } from 'core/domain';
 
@@ -11,20 +12,17 @@ export interface IExecutionParametersProps {
   columnLayoutAfter: number;
 }
 
-export interface IExecutionParametersState {
-  parameters: Array<{ key: string; value: any }>;
-}
-
-export class ExecutionParameters extends React.Component<IExecutionParametersProps, IExecutionParametersState> {
+export class ExecutionParameters extends React.Component<IExecutionParametersProps> {
   constructor(props: IExecutionParametersProps) {
     super(props);
+  }
 
+  private getDisplayableParameters = memoize((execution: IExecution) => {
     // these are internal parameters that are not useful to end users
     const strategyExclusions = ['parentPipelineId', 'strategy', 'parentStageId', 'deploymentDetails', 'cloudProvider'];
 
-    let parameters: Array<{ key: string; value: any }> = [];
+    let parameters: Array<{ key: string; value: any }>;
 
-    const { execution } = this.props;
     if (execution.trigger && execution.trigger.parameters) {
       parameters = Object.keys(execution.trigger.parameters)
         .sort()
@@ -34,14 +32,13 @@ export class ExecutionParameters extends React.Component<IExecutionParametersPro
         });
     }
 
-    this.state = {
-      parameters,
-    };
-  }
+    return parameters;
+  });
 
   public render() {
-    const { showingParams, columnLayoutAfter } = this.props;
-    const { parameters } = this.state;
+    const { showingParams, columnLayoutAfter, execution } = this.props;
+
+    const parameters = this.getDisplayableParameters(execution);
 
     if (!parameters.length || !showingParams) {
       return null;
