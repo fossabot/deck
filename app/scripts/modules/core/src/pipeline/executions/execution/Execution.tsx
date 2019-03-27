@@ -81,7 +81,7 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     };
 
     const restartedStage = execution.stages.find(stage => stage.context.restartDetails !== undefined);
-    const parametersCount = Object.keys(execution.trigger.parameters).length;
+    const parametersCount = Object.keys(trigger.parameters).length;
 
     this.state = {
       showingDetails: this.invalidateShowingDetails(props),
