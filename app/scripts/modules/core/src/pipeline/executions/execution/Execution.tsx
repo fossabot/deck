@@ -45,7 +45,6 @@ export interface IExecutionProps {
 export interface IExecutionState {
   showingDetails: boolean;
   showingParams: boolean;
-  parametersCount: number;
   collapseParamsArtifactsAfter: number;
   pipelinesUrl: string;
   viewState: IExecutionViewState;
@@ -81,12 +80,12 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     };
 
     const restartedStage = execution.stages.find(stage => stage.context.restartDetails !== undefined);
-    const parametersCount = Object.keys(trigger.parameters).length;
 
     this.state = {
       showingDetails: this.invalidateShowingDetails(props),
-      showingParams: standalone || parametersCount + resolvedExpectedArtifacts.length < collapseParamsArtifactsAfter,
-      parametersCount: parametersCount,
+      showingParams:
+        standalone ||
+        Object.keys(trigger.parameters).length + resolvedExpectedArtifacts.length < collapseParamsArtifactsAfter,
       collapseParamsArtifactsAfter: collapseParamsArtifactsAfter,
       pipelinesUrl: [SETTINGS.gateUrl, 'pipelines/'].join('/'),
       viewState: initialViewState,
@@ -280,7 +279,6 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
       restartDetails,
       showingDetails,
       showingParams,
-      parametersCount,
       collapseParamsArtifactsAfter,
       sortFilter,
       viewState,
@@ -314,6 +312,7 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
       'show-durations': showDurations,
     });
 
+    const parametersCount = Object.keys(trigger.parameters).length;
     return (
       <div className={className} id={`execution-${execution.id}`}>
         <div className={`execution-overview group-by-${sortFilter.groupBy}`}>
