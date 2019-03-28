@@ -1,32 +1,66 @@
 import * as React from 'react';
 import memoize from 'memoize-one';
+import filter from 'lodash';
 
-import { IExecution } from 'core/domain';
+import { IExecution, IPipeline, IParameter } from 'core/domain';
+import { Application } from 'core/application/application.model';
 
 import './executionStatus.less';
 import './executionParameters.less';
+import { ReactInjector } from 'core/reactShims';
+import { hydrate } from 'react-dom';
+import { pipe } from 'rxjs';
+import { isUndefined } from 'util';
 
 export interface IExecutionParametersProps {
+  application: Application;
   execution: IExecution;
   showingParams: boolean;
   columnLayoutAfter: number;
+  pipelineConfig: IPipeline;
+  // handleShowingAllParams: Function;
 }
 
-export class ExecutionParameters extends React.Component<IExecutionParametersProps> {
+export interface IExecutionParametersState {}
+
+type IDisplayableParameters = Array<{
+  key: string;
+  value: any;
+}>;
+
+export class ExecutionParameters extends React.Component<IExecutionParametersProps, IExecutionParametersState> {
   constructor(props: IExecutionParametersProps) {
     super(props);
   }
 
-  private getDisplayableParameters = memoize((execution: IExecution) => {
+  private getDisplayableParameters = memoize((execution: IExecution, pipelineConfig: IPipeline) => {
     // these are internal parameters that are not useful to end users
     const strategyExclusions = ['parentPipelineId', 'strategy', 'parentStageId', 'deploymentDetails', 'cloudProvider'];
 
-    let parameters: Array<{ key: string; value: any }>;
+    let parameters: IDisplayableParameters;
+
+    const paramConfigOrder: { [key: string]: number } = {};
+    pipelineConfig.parameterConfig.forEach((param, index) => {
+      paramConfigOrder[param.name] = index;
+    });
 
     if (execution.trigger && execution.trigger.parameters) {
       parameters = Object.keys(execution.trigger.parameters)
-        .sort()
         .filter(paramKey => (execution.isStrategy ? !strategyExclusions.includes(paramKey) : true))
+        .sort((a, b) => {
+          // we'll sort by user provided order
+          // if param is not found in pipelineConfig.paramConfig, then we'll fallback to string sort it
+          if (isUndefined(paramConfigOrder[a]) && isUndefined(paramConfigOrder[b])) {
+            return a < b ? -1 : 1; // string sort missing paramConfigs
+          } else if (isUndefined(paramConfigOrder[a])) {
+            return 1; // b is found, so a should be moved to the end
+          } else if (isUndefined(paramConfigOrder[b])) {
+            return -1; // a was found, so b should be moved to the end
+          }
+
+          // user defined ordering
+          return paramConfigOrder[a] - paramConfigOrder[b];
+        })
         .map((paramKey: string) => {
           return { key: paramKey, value: JSON.stringify(execution.trigger.parameters[paramKey]) };
         });
@@ -36,9 +70,9 @@ export class ExecutionParameters extends React.Component<IExecutionParametersPro
   });
 
   public render() {
-    const { showingParams, columnLayoutAfter, execution } = this.props;
+    const { showingParams, columnLayoutAfter, execution, pipelineConfig } = this.props;
 
-    const parameters = this.getDisplayableParameters(execution);
+    let parameters = this.getDisplayableParameters(execution, pipelineConfig);
 
     if (!parameters.length || !showingParams) {
       return null;

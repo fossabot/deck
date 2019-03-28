@@ -32,6 +32,7 @@ import './execution.less';
 export interface IExecutionProps {
   application: Application;
   execution: IExecution;
+  pipelineConfig: IPipeline;
   showDurations?: boolean;
   standalone?: boolean;
   title?: string | JSX.Element;
@@ -272,8 +273,21 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
     this.toggleDetails();
   };
 
+  // private handleParametersArtifactsHeader = (): void => {
+  //
+  // }
+
   public render() {
-    const { application, execution, showAccountLabels, showDurations, standalone, title, cancelHelpText } = this.props;
+    const {
+      application,
+      pipelineConfig,
+      execution,
+      showAccountLabels,
+      showDurations,
+      standalone,
+      title,
+      cancelHelpText,
+    } = this.props;
     const {
       pipelinesUrl,
       restartDetails,
@@ -422,7 +436,9 @@ export class Execution extends React.Component<IExecutionProps, IExecutionState>
             </a>
           </div>
           <ExecutionParameters
+            application={application}
             execution={execution}
+            pipelineConfig={pipelineConfig}
             showingParams={showingParams}
             columnLayoutAfter={collapseParamsArtifactsAfter - resolvedExpectedArtifacts.length}
           />
