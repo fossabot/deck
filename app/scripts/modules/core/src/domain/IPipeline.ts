@@ -35,6 +35,7 @@ export interface IParameter {
   description: string;
   default: string;
   hasOptions: boolean;
+  alwaysShowing: boolean;
   options: IParameterOption[];
   condition?: IParameterCondition;
 }
