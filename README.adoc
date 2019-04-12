@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Farmory-io%2Fdeck.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Farmory-io%2Fdeck?ref=badge_shield)
+
 = Spinnaker UI
 
 image::https://api.travis-ci.org/spinnaker/deck.svg?branch=master["Build Status", link="https://travis-ci.org/spinnaker/deck"]
@@ -59,3 +61,7 @@ For now, you can look at the https://github.com/spinnaker/deck/tree/master/app/s
 get an idea how we are customizing Deck internally. Expect a lot of this to change, though, as we figure out better, cleaner
 hooks and integration points. And we're happy to provide new integration points (or accept pull requests) following
 those existing conventions if you need an integration point that doesn't already exist.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Farmory-io%2Fdeck.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Farmory-io%2Fdeck?ref=badge_large)
